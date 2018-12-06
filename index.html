@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="./css/main.css" rel="stylesheet">
+    <script src="./node_modules/chart.js/dist/Chart.js"></script>
+
+    <!-- <script src="./js/readTransactionFile.js"></script> -->
+  </head>
+
+  <body>
+  	
+    <div class="container">
+
+      <header class="header">
+        <h1 class="site-title" data-content-field="site-title">
+          Transaction Visualisation
+        </h1>
+      </header>
+
+      <main class="content">
+        <div>
+          <p>All transactions to and from my normal account and my savings account. Debits and credits summed separately, per day.</p>
+        </div>
+      </main>
+
+    </div>
+
+    <canvas id="myChart" width=90% height=40%></canvas>
+    <script src="./js/myChart.js"></script>
+
+  </body>
+</html>
