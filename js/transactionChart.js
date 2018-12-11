@@ -1,5 +1,7 @@
-var ctx = document.getElementById("myChart").getContext('2d');
-var myChart = new Chart(ctx, {
+let filename = 'CSV_A_20181206_104718.csv';
+
+let ctx = document.getElementById("transactionChart").getContext('2d');
+let transactionChart = new Chart(ctx, {
 	options: {
 		title: {
 			display: true,
@@ -8,10 +10,10 @@ var myChart = new Chart(ctx, {
 	}
 });
 
-function renderTransactions(years, creditAmounts, debitAmounts) {
-	var ctx = document.getElementById("myChart").getContext('2d');
-	var data = {
-		labels: years,
+function renderTransactions(dates, creditAmounts, debitAmounts) {
+	let ctx = document.getElementById("transactionChart").getContext('2d');
+	let data = {
+		labels: dates,
 		datasets: [
 			{
 				label: 'Credits',
@@ -28,9 +30,13 @@ function renderTransactions(years, creditAmounts, debitAmounts) {
 	            borderWidth: 1
 			}]
 	};
-	var options = {
+	let options = {
 		scales: {
 			xAxes: [{
+				type: 'time',
+				time: {
+					unit: 'year'
+				},
 				gridLines: {
 					display: false
 				},
@@ -48,7 +54,7 @@ function renderTransactions(years, creditAmounts, debitAmounts) {
 			}]
 		}
 	};
-	var myChart = new Chart(ctx, {
+	let transactionChart = new Chart(ctx, {
 		type: 'bar',
 		data: data,
 		options: options
@@ -56,21 +62,21 @@ function renderTransactions(years, creditAmounts, debitAmounts) {
 }
 
 function parseTransactionFile(allText) {
-	var debits = [];
-	var credits = [];
-	var lines = allText.split("\n");
-	var i;
+	let debits = [];
+	let credits = [];
+	let lines = allText.split("\n");
+	let i;
 	for (i = 1; i < lines.length-1; i++) {
-		var line = lines[i];
-		var items = line.split(",");
+		let line = lines[i];
+		let items = line.split(",");
 
-		var dateString = items[4].replace('"','');
-		var amountString = (items[6] + "." + items[7]).replace('"','');
+		let dateString = items[4].replace('"','');
+		let amountString = (items[6] + "." + items[7]).replace('"','');
 
-		var unixtime = Date.parse(dateString, "YYYY-MM-DD");
-		var date = new Date(unixtime);
+		let unixtime = Date.parse(dateString, "YYYY-MM-DD");
+		let date = new Date(unixtime);
 
-		var amount = parseFloat(amountString);
+		let amount = parseFloat(amountString);
 
 		if (amount < 0.0) {
 			credits.push({"unixtime": unixtime, 
@@ -110,22 +116,22 @@ function parseTransactionFile(allText) {
 
 	// Instead of transaction objects, we want arrays for rendering: 
 	// One for the dates, one for the amounts.
-	var years = [];
-	var creditAmounts = [];
-	var debitAmounts = [];
+	let dates = [];
+	let creditAmounts = [];
+	let debitAmounts = [];
 	for (i = 0; i < credits.length; i++) {
-		years[i] = credits[i].year;
+		dates[i] = new Date(credits[i].unixtime);
 		creditAmounts[i] = credits[i].amount;
 		debitAmounts[i] = -debits[i].amount;
 	}
 
-	renderTransactions(years, creditAmounts, debitAmounts);
+	renderTransactions(dates, creditAmounts, debitAmounts);
 	//console.log(JSON.stringify(transactions));
 }
 
 function readTransactionFile(filename) {
-	var allText;
-	var rawFile = new XMLHttpRequest();
+	let allText;
+	let rawFile = new XMLHttpRequest();
 	rawFile.open("GET", filename, false);
 	rawFile.onreadystatechange = function () {
 		if (rawFile.readyState === 4) {
@@ -137,4 +143,4 @@ function readTransactionFile(filename) {
 	rawFile.send(null);
 }
 
-readTransactionFile("./data/CSV_A_20181206_104718.csv");
+readTransactionFile('./data/' + filename);
